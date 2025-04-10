@@ -1,5 +1,6 @@
 import os
 
+# Получает список уровней из папки levels
 def get_available_levels() -> list[int]:
     levels_dir = "levels"
     files = os.listdir(levels_dir)

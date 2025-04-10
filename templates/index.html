@@ -117,7 +117,17 @@
         <a class="btn-download" href="/hint/download?level_id={{ level_id }}" download>
           📥 Скачать подсказки (JSON)
         </a>
-      </div>      
+      </div>  
+      <form method="post" action="/clear-cache" style="text-align: center; margin-top: 15px;">
+        <button type="submit" class="btn-download" style="background-color: #e74c3c;">🧹 Очистить кэш</button>
+      </form>
+      
+      <form method="post" action="/upload" enctype="multipart/form-data" style="text-align: center; margin-top: 20px;">
+        <label for="file">или загрузите свой JSON уровня:</label><br>
+        <input type="file" name="file" accept=".json" required style="margin-top: 5px;">
+        <button type="submit" class="btn-download" style="margin-top: 10px;">📤 Загрузить и сгенерировать</button>
+      </form>
+          
     {% endif %}
   </div>
 </body>

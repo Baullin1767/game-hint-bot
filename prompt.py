@@ -1,5 +1,6 @@
 import json
 
+# Генерирует промт
 def generate_level_description(level_data: dict) -> str:
     objects = level_data["level"]["objects"]
 

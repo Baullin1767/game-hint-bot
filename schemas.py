@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List, Optional, Literal
 
+# Классы для валидации схемы уровня
+
 
 class GameObject(BaseModel):
     type: Literal[
