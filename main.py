@@ -1,12 +1,10 @@
 import json
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Body
 from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
-from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
-
-from fastapi import UploadFile, File
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse, JSONResponse
 
 from schemas import LevelData
 
@@ -155,6 +153,30 @@ async def upload_level(request: Request, file: UploadFile = File(...)):
             "hints": None,
             "error": f"Ошибка при обработке JSON: {e}"
         })
+
+
+@app.post("/api/upload", response_class=JSONResponse)
+async def upload_level_api(level_json: dict = Body(...)):
+    try:
+        # Валидация структуры
+        level_data = LevelData(**level_json)
+
+        # Получаем ID уровня
+        level_id = level_data.level.id
+        level_filename = f"level_{level_id}.json"
+        level_path = os.path.join("levels", level_filename)
+
+        # Сохраняем файл
+        os.makedirs("levels", exist_ok=True)
+        with open(level_path, "w", encoding="utf-8") as f:
+            json.dump(level_json, f, ensure_ascii=False, indent=2)
+
+        # Генерируем подсказки
+        result = generate_hint_response(level_id)
+        return result
+
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
 
 
 # Очищает кэш
