@@ -12,7 +12,7 @@ from schemas import LevelData
 
 from llm_agent import generate_hint
 from prompt import generate_level_description
-from utils import get_available_levels, generate_hint_response_from_data
+from utils import get_available_levels
 
 
 app = FastAPI()
@@ -21,25 +21,36 @@ templates = Jinja2Templates(directory="templates")
 
 # Открывает веб интерфейс
 @app.get("/", response_class=HTMLResponse)
-def web_index(request: Request, level_id: int = 1):
+def index(request: Request, level_id: int = 1):
     level_ids = get_available_levels()
 
+    # Если уровней вообще нет — показываем только форму загрузки
+    if not level_ids:
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "level_id": None,
+            "level_ids": [],
+            "hints": None,
+            "error": None
+        })
+
     try:
-        data = generate_hint_response(level_id)
+        result = generate_hint_response(level_id)
         return templates.TemplateResponse("index.html", {
             "request": request,
             "level_id": level_id,
             "level_ids": level_ids,
-            "hints": data["hints"]
+            "hints": result["hints"]
         })
-    except HTTPException as e:
+    except Exception as e:
         return templates.TemplateResponse("index.html", {
             "request": request,
             "level_id": level_id,
             "level_ids": level_ids,
             "hints": None,
-            "error": e.detail
+            "error": str(e)
         })
+    
 
 # Запрос на создание посдказок
 @app.get("/hint")
@@ -108,6 +119,7 @@ def download_hint(level_id: int):
         media_type="application/json"
     )
 
+# Загружает и генерирует подсказки из файла пользователя
 @app.post("/upload", response_class=HTMLResponse)
 async def upload_level(request: Request, file: UploadFile = File(...)):
     try:
@@ -118,24 +130,15 @@ async def upload_level(request: Request, file: UploadFile = File(...)):
         # Получаем ID уровня
         level_id = level_data.level.id
         level_filename = f"level_{level_id}.json"
-        cache_path = f"cache/hint_level_{level_id}.json"
         level_path = os.path.join("levels", level_filename)
 
-        # Сохраняем файл
+        # Сохраняем файл в папку levels
         os.makedirs("levels", exist_ok=True)
         with open(level_path, "w", encoding="utf-8") as f:
             json.dump(level_json, f, ensure_ascii=False, indent=2)
 
-        # Используем генератор
+        # Генерируем подсказки (и автоматически кэшируем)
         result = generate_hint_response(level_id)
-
-        # Сохраняем в кэш
-        if os.path.exists(cache_path):
-            with open(cache_path, "r", encoding="utf-8") as f:
-                return json.load(f)
-            
-        with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(result, f, ensure_ascii=False, indent=2)
 
         return templates.TemplateResponse("index.html", {
             "request": request,

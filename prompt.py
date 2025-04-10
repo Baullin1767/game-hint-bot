@@ -43,6 +43,7 @@ def generate_level_description(level_data: dict) -> str:
         "- 'Осторожно, ловушка на (x, y)'\n"
         "- 'Используй телепорт на (x, y)'\n"
         "- 'Проверь сундук на (x, y)'\n"
+        "- 'Осторожно! Враг на (x, y)'\n"
         "Пиши подсказки списком, без вступления, по одному пункту на строку."
         f"JSON уровня:\n{json.dumps(lines, ensure_ascii=False, indent=2)}"
     )

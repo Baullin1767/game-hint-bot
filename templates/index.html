@@ -35,9 +35,10 @@
       gap: 10px;
       justify-content: center;
       margin-bottom: 30px;
+      flex-wrap: wrap;
     }
 
-    select, button {
+    select, button, input[type="file"] {
       padding: 10px 16px;
       border-radius: 6px;
       border: 1px solid #ccc;
@@ -72,62 +73,111 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    .btn-download {
-        display: inline-block;
-        padding: 10px 16px;
-        border-radius: 6px;
-        background-color: #27ae60;
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        transition: background-color 0.2s ease;
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
     }
 
-    .btn-download:hover {
+    .btn-green {
+      padding: 10px 16px;
+      border-radius: 6px;
+      background-color: #27ae60;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-green:hover {
       background-color: #1e8449;
     }
 
+    .btn-red {
+      padding: 10px 16px;
+      border-radius: 6px;
+      background-color: #e74c3c;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-red:hover {
+      background-color: #c0392b;
+    }
+
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    hr {
+      margin-top: 40px;
+      margin-bottom: 30px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Генератор игровых подсказок</h1>
 
-    <form method="get" action="/">
-      <select name="level_id" id="level_id">
-        {% for lid in level_ids %}
-          <option value="{{ lid }}" {% if lid == level_id %}selected{% endif %}>Уровень {{ lid }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Сгенерировать</button>
-    </form>
+    {% if level_ids %}
+      <form method="get" action="/">
+        <select name="level_id">
+          {% for id in level_ids %}
+            <option value="{{ id }}" {% if id == level_id %}selected{% endif %}>Уровень {{ id }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Сгенерировать</button>
+      </form>
 
-    {% if error %}
-      <div class="error">{{ error }}</div>
+      {% if hints %}
+        <div>
+          <h5>Подсказки:</h5>
+          <ul>
+            {% for hint in hints %}
+              <li>{{ hint }}</li>
+            {% endfor %}
+          </ul>
+
+          <div class="button-row">
+            <form method="get" action="/hint/download">
+              <input type="hidden" name="level_id" value="{{ level_id }}">
+              <button class="btn-green" type="submit">📥 Скачать JSON</button>
+            </form>
+
+            <form method="post" action="/clear-cache">
+              <input type="hidden" name="_method" value="delete">
+              <input type="hidden" name="level_id" value="{{ level_id }}">
+              <button class="btn-red" type="submit">🧹 Очистить кэш</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    {% else %}
+      <p style="text-align: center;">Нет доступных уровней. Загрузите JSON-файл с уровнем, чтобы начать.</p>
     {% endif %}
 
-    {% if hints %}
-      <ul>
-        {% for hint in hints %}
-          <li>{{ hint }}</li>
-        {% endfor %}
-      </ul>
+    <hr>
 
-      <div style="text-align: center; margin-top: 25px;">
-        <a class="btn-download" href="/hint/download?level_id={{ level_id }}" download>
-          📥 Скачать подсказки (JSON)
-        </a>
-      </div>  
-      <form method="post" action="/clear-cache" style="text-align: center; margin-top: 15px;">
-        <button type="submit" class="btn-download" style="background-color: #e74c3c;">🧹 Очистить кэш</button>
+    <div class="file-upload">
+      <h5>Загрузить уровень (JSON)</h5>
+      <form method="post" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit" style="margin-top: 10px;">Загрузить</button>
       </form>
-      
-      <form method="post" action="/upload" enctype="multipart/form-data" style="text-align: center; margin-top: 20px;">
-        <label for="file">или загрузите свой JSON уровня:</label><br>
-        <input type="file" name="file" accept=".json" required style="margin-top: 5px;">
-        <button type="submit" class="btn-download" style="margin-top: 10px;">📤 Загрузить и сгенерировать</button>
-      </form>
-          
+    </div>
+
+    {% if error %}
+      <p class="error">Ошибка при обработке JSON: {{ error }}</p>
     {% endif %}
   </div>
 </body>

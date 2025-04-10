@@ -2,12 +2,39 @@
   "level": {
     "id": 1,
     "objects": [
-      { "type": "player", "x": 5, "y": 5 },
-      { "type": "key", "id": "key_red", "x": 10, "y": 20 },
-      { "type": "door", "id": "door_red", "key_id": "key_red", "x": 80, "y": 80 },
-      { "type": "trap", "x": 15, "y": 18 },
-      { "type": "teleport", "x": 90, "y": 10 },
-      { "type": "chest", "x": 15, "y": 25 }
+      {
+        "type": "player",
+        "x": 5,
+        "y": 5
+      },
+      {
+        "type": "key",
+        "id": "key_red",
+        "x": 10,
+        "y": 20
+      },
+      {
+        "type": "door",
+        "id": "door_red",
+        "key_id": "key_red",
+        "x": 80,
+        "y": 80
+      },
+      {
+        "type": "trap",
+        "x": 15,
+        "y": 18
+      },
+      {
+        "type": "teleport",
+        "x": 90,
+        "y": 10
+      },
+      {
+        "type": "chest",
+        "x": 15,
+        "y": 25
+      }
     ]
   }
 }
