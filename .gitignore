@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual env
+.venv/
+env/
+venv/
+
+# Env files
+.env
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Mac/Linux
+.DS_Store
+
+# Cache
+cache/
+*.log
+
+# Docker
+*.pid
+*.sock
+
+# PyInstaller
+*.spec
+build/
+dist/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS trash
+Thumbs.db
+desktop.ini
