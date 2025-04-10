@@ -10,7 +10,7 @@
 #### 1. Клонируй репозиторий
 
 ```bash
-git clone https://github.com/your-name/game-hint-bot.git
+git clone https://github.com/Baullin1767/game-hint-bot.git
 cd game-hint-bot
 ```
 
