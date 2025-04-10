@@ -10,7 +10,7 @@
 #### 1. Клонируй репозиторий
 
 ```bash
-git clone https://github.com/your-name/game-hint-bot.git
+git clone https://github.com/Baullin1767/game-hint-bot.git
 cd game-hint-bot
 ```
 
@@ -66,11 +66,33 @@ docker-compose up --build
 }
 ```
 
+---
+
 #### GET `/hint/download?level_id=1`
 
-Скачивание JSON-файла с подсказками (`application/json`, attachment).
+Скачивание JSON-файла с подсказками  
+(`Content-Disposition: attachment`, формат `application/json`).
 
 ---
+
+#### DELETE `/hint/cache`
+
+Удаляет **все закешированные подсказки** (файлы из `cache/`).  
+Полезно при отладке, обновлении уровней или повторной генерации.
+
+**Пример вызова:**
+
+```bash
+curl -X DELETE http://localhost:8000/hint/cache
+```
+
+**Ответ:**
+
+```json
+{
+  "message": "Кеш подсказок очищен"
+}
+```
 
 ### 📂 Структура проекта
 
